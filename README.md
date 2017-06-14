@@ -1,17 +1,17 @@
 # wnn
 Wide Neural Network:
 
-This is a prototype implementation of a Wide Neural Network. Details on the architecture will be added soon. 
-The modules are written in Python and only use Numpy. 
+This is a prototype implementation of a Wide Neural Network. Details on the architecture will be added soon. <br />
+The modules are written in Python and only use Numpy. <br /> <br />
 
-Completed: 
-Network initialization
-Network Forward
-Evaluate gradients - weights and v_in, v_board done. 
-Softmax 
-Softmax Loss and derivative
+Completed: <br />
+Network initialization<br />
+Network Forward <br />
+Evaluate gradients - weights and v_in, v_board <br /> 
+Softmax <br />
+Softmax Loss and derivative <br />
 
-To Do: 
-Complete gradient implementation for biases
-Unit testing
-Train on mnist digit classification
+To Do: <br />
+Complete gradient implementation for biases <br />
+Unit testing <br />
+Train on mnist digit classification <br />
