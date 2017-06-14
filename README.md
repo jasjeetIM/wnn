@@ -13,5 +13,6 @@ Softmax Loss and derivative <br />
 
 To Do: <br />
 Complete gradient implementation for biases <br />
+Update parameters with gradient <br />
 Unit testing <br />
 Train on mnist digit classification <br />
