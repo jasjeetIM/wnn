@@ -1,6 +1,5 @@
 #! /usr/bin/python
 # Author: Jasjeet Dhaliwal
-# Date: 6/9/2017
 
 import numpy as np
 from softmax import *

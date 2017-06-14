@@ -1,6 +1,5 @@
 #!/usr/bin/python
 #Author: Jasjeet Dhaliwal
-#Date: 6/8/2017
 
 import numpy as np
 
