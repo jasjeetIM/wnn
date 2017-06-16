@@ -14,9 +14,9 @@ Evaluate gradients - weights and v_in, v_board <br />
 Softmax <br />
 Softmax Loss and derivative <br />
 Vectorization over batch <br />
-
-To Do: <br />
 Complete gradient implementation for biases <br />
 Update parameters with gradient <br />
+
+To Do: <br />
 Unit testing <br />
 Train on mnist digit classification <br />
