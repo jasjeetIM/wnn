@@ -20,3 +20,4 @@ Update parameters with gradient <br />
 To Do: <br />
 Unit testing <br />
 Train on mnist digit classification <br />
+Forward and Gradient eval code optimization <br />

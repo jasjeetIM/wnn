@@ -3,9 +3,13 @@
 
 import numpy as np
 from softmax import *
+from tensorflow.examples.tutorials.mnist import input_data
 
-BATCH_SIZE = 1
-NUM_CLASSES = 2
+mnist_data = input_data.read_data_sets('MNIST_data/', one_hot=False)
+BATCH_SIZE = 100
+NUM_CLASSES = 10
+
+
 
 def get_params(inp_size, num_classes, hidden_size):
   """Define the network as a graph
@@ -1125,20 +1129,29 @@ def update_params(params, gradients, lr):
 
   return tuple(updated_params)
 
+def main():
+  """train and eval the network"""
 
-#Tester code
-hidden_size = 2
-input_size = 2
-learning_rate = 0.1
-p = get_params(input_size,NUM_CLASSES,hidden_size)
-inputs = np.ones((BATCH_SIZE,input_size))
-logit, params_back = forward(p,inputs,hidden_size)
-print logit
-label= np.array([0,1])
-loss, probs=  softmax_cross_entropy_loss(logit, label, p, BATCH_SIZE)
-print loss
-df = softmax_cross_entropy_loss_derivative(probs, label)
-gradients = evaluate_gradients(p, params_back, df, hidden_size)
-params = update_params(p, gradients, learning_rate)
-print p
-print params
+  mnist_data = input_data.read_data_sets('MNIST_data/', one_hot=False)
+  train = mnist_data.train
+  train_images = train.images
+  train_labels = train.labels
+  input_size = len(train_images[0])
+  hidden_size = 10000
+  learning_rate = 0.4
+
+  params = get_params(input_size,NUM_CLASSES,hidden_size)
+  #train on mini-batches
+  for i in range(int(len(train_images)/BATCH_SIZE)):
+    print ('In training iteration {}'.format(i))
+    mini_batch = np.array(train_images[i*BATCH_SIZE:(i+1)*BATCH_SIZE])
+    labels = np.array(train_labels[i*BATCH_SIZE:(i+1)*BATCH_SIZE])
+
+    logit, params_back = forward(params,mini_batch,hidden_size)
+    loss, probs=  softmax_cross_entropy_loss(logit, labels, params, BATCH_SIZE)
+    df = softmax_cross_entropy_loss_derivative(probs, labels)
+    gradients = evaluate_gradients(params, params_back, df, hidden_size)
+    params = update_params(params, gradients, learning_rate)
+
+if __name__ == '__main__':
+  main()
