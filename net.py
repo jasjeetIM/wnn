@@ -1131,7 +1131,6 @@ hidden_size = 2
 input_size = 2
 learning_rate = 0.1
 p = get_params(input_size,NUM_CLASSES,hidden_size)
-print p
 inputs = np.ones((BATCH_SIZE,input_size))
 logit, params_back = forward(p,inputs,hidden_size)
 print logit
@@ -1141,4 +1140,5 @@ print loss
 df = softmax_cross_entropy_loss_derivative(probs, label)
 gradients = evaluate_gradients(p, params_back, df, hidden_size)
 params = update_params(p, gradients, learning_rate)
+print p
 print params
