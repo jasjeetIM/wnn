@@ -427,8 +427,6 @@ def evaluate_gradients(params, params_back, df, hidden_size):
   dh6_6_l6_in, dh6_6_w6, \
   v_in, v_board = params_back
 
-  params = (w1, b1, w2, b2, w3, b3, w4, b4, w5, b5, w6, b6, v_board, v_in)
-
   #dL/dv_in
   tmp = v_board * df
   tmp = np.sum(v_board, axis=1) 
@@ -1106,8 +1104,8 @@ def evaluate_gradients(params, params_back, df, hidden_size):
   dL_v_board+=v_board 
   gradients = ( dL_w1, dL_b1, dL_w2, dL_b2, dL_w3, dL_b3,\
                dL_w4, dL_b4, dL_w5, dL_b5, dL_w6, dL_b6,\
-               dL_v_board, dL_v_in)
-  return gradients, params
+               dL_v_board)
+  return gradients
 
 def update_params(params, gradients, lr):
   """Update parameters with the provided gradients
@@ -1133,6 +1131,7 @@ hidden_size = 2
 input_size = 2
 learning_rate = 0.1
 p = get_params(input_size,NUM_CLASSES,hidden_size)
+print p
 inputs = np.ones((BATCH_SIZE,input_size))
 logit, params_back = forward(p,inputs,hidden_size)
 print logit
@@ -1140,6 +1139,6 @@ label= np.array([0,1])
 loss, probs=  softmax_cross_entropy_loss(logit, label, p, BATCH_SIZE)
 print loss
 df = softmax_cross_entropy_loss_derivative(probs, label)
-gradients, params = evaluate_gradients(p, params_back, df, hidden_size)
-params = update_params(params, gradients, learning_rate)
+gradients = evaluate_gradients(p, params_back, df, hidden_size)
+params = update_params(p, gradients, learning_rate)
 print params
