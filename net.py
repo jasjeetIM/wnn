@@ -1,11 +1,11 @@
 #! /usr/bin/python
 # Author: Jasjeet Dhaliwal
 
+import time
 import numpy as np
 from softmax import *
 from tensorflow.examples.tutorials.mnist import input_data
 
-mnist_data = input_data.read_data_sets('MNIST_data/', one_hot=False)
 BATCH_SIZE = 100
 NUM_CLASSES = 10
 
@@ -1144,14 +1144,26 @@ def main():
   #train on mini-batches
   for i in range(int(len(train_images)/BATCH_SIZE)):
     print ('In training iteration {}'.format(i))
+    j = time.time()
     mini_batch = np.array(train_images[i*BATCH_SIZE:(i+1)*BATCH_SIZE])
     labels = np.array(train_labels[i*BATCH_SIZE:(i+1)*BATCH_SIZE])
-
+    print ('Prepared input data in {}'.format(time.time() - j))
+    t = time.time()
     logit, params_back = forward(params,mini_batch,hidden_size)
+    print ('Completed forward in {}'.format(time.time() - t))
+    t = time.time()
     loss, probs=  softmax_cross_entropy_loss(logit, labels, params, BATCH_SIZE)
+    print ('Evaluated loss = {} in {}'.format(loss, time.time() -t))
+    t = time.time()
     df = softmax_cross_entropy_loss_derivative(probs, labels)
+    print ('Evaluated softmax derivative in {}'.format(time.time() -t))
+    t = time.time()
     gradients = evaluate_gradients(params, params_back, df, hidden_size)
+    print ('Evaluated network gradients in {}'.format(time.time() -t))
+    t = time.time()
     params = update_params(params, gradients, learning_rate)
+    print ('Updated params in {}'.format(time.time() - t))
+    print ('Total train time for mini-batch was {}'.format(time.time() - j))
 
 if __name__ == '__main__':
   main()
