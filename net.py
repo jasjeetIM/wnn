@@ -430,7 +430,7 @@ def evaluate_gradients(params, params_back, df, hidden_size):
   params = (w1, b1, w2, b2, w3, b3, w4, b4, w5, b5, w6, b6, v_board, v_in)
 
   #dL/dv_in
-  tmp = v_board * df[:,None]
+  tmp = v_board * df
   tmp = np.sum(v_board, axis=1) 
   dL_v_in = np.zeros(v_in.shape)
   for i in range(BATCH_SIZE):
@@ -441,13 +441,13 @@ def evaluate_gradients(params, params_back, df, hidden_size):
   dL_v_board = np.zeros(v_board.shape)
   for i in range(NUM_CLASSES):
     dL_v_board[:,i] = tmp
-  dL_v_board = dL_v_board*df[:,None]
+  dL_v_board = dL_v_board*df
 
   #W6
   #dh62_dw6
   tmp = dL_v_in[0:h]
   dL_h6_2_w6 = np.zeros(dh6_2_w6.shape)
-  dL_h6_2_w6[0:h, :] = dh6_2_w6[0:h, :] * tmp[:,None]
+  dL_h6_2_w6[0:h, :] = dh6_2_w6[0:h, :] * tmp
 
   #dh63_dw6
   tmp =dL_v_in[h:2*h]
@@ -488,16 +488,16 @@ def evaluate_gradients(params, params_back, df, hidden_size):
 
   #dh63_dw5
   t1 =dL_v_in[h:2*h]
-  t2 = dh6_3_l6_in[:,4*h:5*h]*t1[:,None]
+  t2 = dh6_3_l6_in[:,4*h:5*h]*t1
   t2 = np.sum(t2, axis=0) / BATCH_SIZE
 
   dL_h6_3_w5 = np.zeros(dh5_2_w5.shape)
-  dL_h6_3_w5[0:h,:] = dh5_2_w5[0:h,:] * t2[:,None]
+  dL_h6_3_w5[0:h,:] = dh5_2_w5[0:h,:] * t2
 
   
   #dh64_dw5
   t1 =dL_v_in[2*h:3*h]
-  t2 = dh6_4_l6_in[:,4*h:5*h]*t1[:,None]
+  t2 = dh6_4_l6_in[:,4*h:5*h]*t1
   t2 = np.sum(t2, axis=0) /BATCH_SIZE
   t2 = np.concatenate((t2, t2, t2))
 
@@ -508,7 +508,7 @@ def evaluate_gradients(params, params_back, df, hidden_size):
 
   #dh65_dw5
   t1 = dL_v_in[3*h:4*h]
-  t2 = dh6_5_l6_in[:,4*h:5*h]*t1[:,None]
+  t2 = dh6_5_l6_in[:,4*h:5*h]*t1
   t2 = np.sum(t2, axis=0) /BATCH_SIZE
   t2 = np.concatenate((t2, t2))
 
@@ -518,7 +518,7 @@ def evaluate_gradients(params, params_back, df, hidden_size):
 
   #dh66_dw5
   t1 = dL_v_in[4*h:5*h]
-  t2 = dh6_6_l6_in[:,4*h:5*h]*t1[:,None]
+  t2 = dh6_6_l6_in[:,4*h:5*h]*t1
   t2 = np.sum(t2, axis=0) /BATCH_SIZE
 
   dL_h6_6_w5 = np.zeros(dh5_5_w5.shape)
@@ -540,16 +540,16 @@ def evaluate_gradients(params, params_back, df, hidden_size):
 
   #dh63_dw4
   t1 =dL_v_in[h:2*h]
-  t2 = dh6_3_l6_in[:,3*h:4*h]*t1[:,None]
+  t2 = dh6_3_l6_in[:,3*h:4*h]*t1
   t2 = np.sum(t2, axis=0) / BATCH_SIZE
 
   dL_h6_3_w4 = np.zeros(dh4_2_w4.shape)
-  dL_h6_3_w4[0:h,:] = dh4_2_w4[0:h,:] * t2[:,None]
+  dL_h6_3_w4[0:h,:] = dh4_2_w4[0:h,:] * t2
 
   
   #dh64_dw4
   t1 =dL_v_in[2*h:3*h]
-  t2 = dh6_4_l6_in[:,3*h:4*h]*t1[:,None]
+  t2 = dh6_4_l6_in[:,3*h:4*h]*t1
   t2 = np.sum(t2, axis=0) /BATCH_SIZE
   t2 = np.concatenate((t2, t2))
 
@@ -558,31 +558,31 @@ def evaluate_gradients(params, params_back, df, hidden_size):
 
   #dh65_dw4
   t1 = dL_v_in[3*h:4*h]
-  t2 = dh6_5_l6_in[:,3*h:4*h]*t1[:,None]
+  t2 = dh6_5_l6_in[:,3*h:4*h]*t1
   t2 = np.sum(t2, axis=0) /BATCH_SIZE
 
   dL_h6_5_w4_1 = np.zeros(dh4_4_w4.shape)
   dL_h6_5_w4_1[2*h:3*h,:] = dh4_4_w4[2*h:3*h,:] * t2[:,None]
 
 
-  t3 = dh6_5_l6_in[:,4*h:5*h]*t1[:,None]
+  t3 = dh6_5_l6_in[:,4*h:5*h]*t1
   t3 = np.sum(t3, axis=0) /BATCH_SIZE
 
-  t4 = dh5_4_l5_in[:,3*h:4*h]*t3[:,None]
+  t4 = dh5_4_l5_in[:,3*h:4*h]*t3
   t4 = np.sum(t4, axis=0) /BATCH_SIZE
   t4 = np.concatenate((t4,t4))
 
   dL_h6_5_w4_2 = np.zeros(dh4_3_w4.shape)
-  dL_h6_5_w4_2 = dh4_3_w4[h:3*h,:]*t4[:,None]
+  dL_h6_5_w4_2[h:3*h, :] = dh4_3_w4[h:3*h,:]*t4[:,None]
 
   dL_h6_5_w4 = dL_h6_5_w4_1 + dL_h6_5_w4_2
 
   #dh66_dw4
   t1 = dL_v_in[4*h:5*h]
-  t2 = dh6_6_l6_in[:,3*h:4*h]*t1[:,None]
+  t2 = dh6_6_l6_in[:,3*h:4*h]*t1
   t2 = np.sum(t2, axis=0) /BATCH_SIZE
 
-  t3 = dh5_5_l5_in[:,3*h:4*h]*t2[:,None]
+  t3 = dh5_5_l5_in[:,3*h:4*h]*t2
   t3 = np.sum(t3, axis=0) / BATCH_SIZE
 
   dL_h6_6_w4 = np.zeros(dh4_4_w4.shape)
@@ -611,88 +611,88 @@ def evaluate_gradients(params, params_back, df, hidden_size):
 
   #dh63_dw3
   t1 =dL_v_in[h:2*h]
-  t2 = dh6_3_l6_in[:,2*h:3*h]*t1[:,None]
+  t2 = dh6_3_l6_in[:,2*h:3*h]*t1
   t2 = np.sum(t2, axis=0) / BATCH_SIZE
 
   dL_h6_3_w3 = np.zeros(dh3_2_w3.shape)
-  dL_h6_3_w3[0:h,:] = dh3_2_w4[0:h,:] * t2[:,None]
+  dL_h6_3_w3[0:h,:] = dh3_2_w3[0:h,:] * t2
 
   
   #dh64_dw3
   t1 =dL_v_in[2*h:3*h]
-  t2 = dh6_4_l6_in[:,2*h:3*h]*t1[:,None]
+  t2 = dh6_4_l6_in[:,2*h:3*h]*t1
   t2 = np.sum(t2, axis=0) /BATCH_SIZE
 
   dL_h6_4_w3_1 = np.zeros(dh3_3_w3.shape)
-  dL_h6_4_w3_1[h:2*h,:] = dh3_3_w3[h:3*h,:] * t2[:,None]
+  dL_h6_4_w3_1[h:2*h,:] = dh3_3_w3[h:2*h,:] * t2
 
 
-  t3 = dh6_4_l6_in[:,3*h:4*h]*t1[:,None]
+  t3 = dh6_4_l6_in[:,3*h:4*h]*t1
   t3 = np.sum(t3, axis=0) / BATCH_SIZE
  
-  t4 = dh4_3_l4_in[:,2*h:3*h] *t3[:,None]
+  t4 = dh4_3_l4_in[:,2*h:3*h] *t3
   t4 = np.sum(t4, axis=0) /BATCH_SIZE
 
-  dL_h6_4_w3_2 = np.zeors(dh3_2_w3.shape)
-  dL_h6_4_w3_2 = dh3_2_w3[0:h, :] * t4[:,None]
+  dL_h6_4_w3_2 = np.zeros(dh3_2_w3.shape)
+  dL_h6_4_w3_2[0:h,:] = dh3_2_w3[0:h, :] * t4
 
-  t5 = dh6_4_l6_in[:,4*h:5*h]*t1[:,None]
+  t5 = dh6_4_l6_in[:,4*h:5*h]*t1
   t5 = np.sum(t5, axis=0) / BATCH_SIZE
 
-  t6 = dh5_3_l5in[:, 2*h:3*h]*t5[:,None]
+  t6 = dh5_3_l5_in[:, 2*h:3*h]*t5
   t6 = np.sum(t6, axis=0) / BATCH_SIZE
 
   dL_h6_4_w3_3 = np.zeros(dh3_2_w3.shape)
-  dL_h6_4_w3_3[0:h,:] = dh3_2_w3[0:h,:]*t6[:,None]
+  dL_h6_4_w3_3[0:h,:] = dh3_2_w3[0:h,:]*t6
 
   dL_h6_4_w3 = dL_h6_4_w3_1 + dL_h6_4_w3_2 + dL_h6_4_w3_3
 
   #dh65_dw3
   t1 = dL_v_in[3*h:4*h]
-  t2 = dh6_5_l6_in[:,3*h:4*h]*t1[:,None]
+  t2 = dh6_5_l6_in[:,3*h:4*h]*t1
   t2 = np.sum(t2, axis=0) /BATCH_SIZE
 
-  t3 = dh4_4_l4_in[:,2*h:3*h]*t2[:,None]
+  t3 = dh4_4_l4_in[:,2*h:3*h]*t2
   t3 = np.sum(t3, axis=0) / BATCH_SIZE
 
   dL_h6_5_w3_1 = np.zeros(dh3_3_w3.shape)
-  dL_h6_5_w3_1[0:h,:] = dh3_3_w3[h:2*h,:] * t3[:,None]
+  dL_h6_5_w3_1[h:2*h,:] = dh3_3_w3[h:2*h,:] * t3
 
 
-  t4 = dh6_5_l6_in[:,4*h:5*h]*t1[:,None]
+  t4 = dh6_5_l6_in[:,4*h:5*h]*t1
   t4 = np.sum(t4, axis=0) /BATCH_SIZE
 
-  t5 = dh5_4_l5_in[:,2*h:3*h]*t4[:,None]
+  t5 = dh5_4_l5_in[:,2*h:3*h]*t4
   t5 = np.sum(t5, axis=0) /BATCH_SIZE
 
   dL_h6_5_w3_2_1 = np.zeros(dh3_3_w3.shape)
-  dL_h6_5_w3_2_1 = dh3_3_w3[h:2*h, :]*t5[:,None]
+  dL_h6_5_w3_2_1[h:2*h,:] = dh3_3_w3[h:2*h, :]*t5
 
-  t6 = dh5_4_l5_in[:,3*h:4*h]*t4[:,None]
+  t6 = dh5_4_l5_in[:,3*h:4*h]*t4
   t6 = np.sum(t6, axis=0) /BATCH_SIZE
 
-  t7 = dh4_3_l4_in[:,2*h:3*h]*t6[:,None]
+  t7 = dh4_3_l4_in[:,2*h:3*h]*t6
   t7 = np.sum(t7, axis=0) / BATCH_SIZE
 
   dL_h6_5_w3_2_2 = np.zeros(dh3_2_w3.shape)
-  dL_h6_5_w3_2_2[0:h,:] = dh3_2_w3[0:h,:]*t7[:,None]
+  dL_h6_5_w3_2_2[0:h,:] = dh3_2_w3[0:h,:]*t7
 
   dL_h6_5_w3_2 = dL_h6_5_w3_2_1 + dL_h6_5_w3_2_2
-
+  dL_h6_5_w3 = dL_h6_5_w3_1 + dL_h6_5_w3_2
 
   #dh66_dw3
   t1 = dL_v_in[4*h:5*h]
-  t2 = dh6_6_l6_in[:,4*h:5*h]*t1[:,None]
+  t2 = dh6_6_l6_in[:,4*h:5*h]*t1
   t2 = np.sum(t2, axis=0) /BATCH_SIZE
 
-  t3 = dh5_5_l5_in[:,3*h:4*h]*t2[:,None]
+  t3 = dh5_5_l5_in[:,3*h:4*h]*t2
   t3 = np.sum(t3, axis=0) / BATCH_SIZE
 
-  t4 = dh4_4_l4_in[:,2*h:3*h]*t3[:,None]
+  t4 = dh4_4_l4_in[:,2*h:3*h]*t3
   t4 = np.sum(t4, axis=0) / BATCH_SIZE
 
   dL_h6_6_w3 = np.zeros(dh3_3_w3.shape)
-  dL_h6_6_w3[h:2*h,:] = dh3_3_w3[h:2*h,:] * t4[:,None]
+  dL_h6_6_w3[h:2*h,:] = dh3_3_w3[h:2*h,:] * t4
 
   dL_w3 = dL_h6_3_w3 + dL_h6_4_w3 +\
           dL_h6_5_w3 + dL_h6_6_w3
@@ -722,98 +722,98 @@ def evaluate_gradients(params, params_back, df, hidden_size):
 
   #dh63_dw2
   t1 =dL_v_in[h:2*h]
-  t2 = dh6_3_l6_in[:,h:2*h]*t1[:,None]
+  t2 = dh6_3_l6_in[:,h:2*h]*t1
   t2 = np.sum(t2, axis=0) / BATCH_SIZE
 
   dL_h6_3_w2 = np.zeros(dh2_2_w2.shape)
-  dL_h6_3_w2[:,:] = dh2_2_w2[:,:] * t2[:,None]
+  dL_h6_3_w2[:,:] = dh2_2_w2[:,:] * t2
 
   #dh64_dw3
   t1 =dL_v_in[2*h:3*h]
-  t2 = dh6_4_l6_in[:,2*h:3*h]*t1[:,None]
+  t2 = dh6_4_l6_in[:,2*h:3*h]*t1
   t2 = np.sum(t2, axis=0) /BATCH_SIZE
 
-  t3 = dh3_3_l3_in[:,h:2*h]*t2[:,None]
+  t3 = dh3_3_l3_in[:,h:2*h]*t2
   t3 = np.sum(t3, axis=0) / BATCH_SIZE
 
   dL_h6_4_w2_1 = np.zeros(dh2_2_w2.shape)
-  dL_h6_4_w2_1[:,:] = dh2_2_w2[:,:] * t3[:,None]
+  dL_h6_4_w2_1[:,:] = dh2_2_w2[:,:] * t3
 
-  t4 = dh6_4_l6_in[:,3*h:4*h]*t1[:,None]
+  t4 = dh6_4_l6_in[:,3*h:4*h]*t1
   t4 = np.sum(t4, axis=0) /BATCH_SIZE
 
-  t5 = dh4_3_l4_in[:,h:2*h]*t4[:,None]
+  t5 = dh4_3_l4_in[:,h:2*h]*t4
   t5 = np.sum(t5, axis=0) / BATCH_SIZE
 
   dL_h6_4_w2_2 = np.zeros(dh2_2_w2.shape)
-  dL_h6_4_w2_2[:,:] = dh2_2_w2[:,:] * t5[:,None]
+  dL_h6_4_w2_2[:,:] = dh2_2_w2[:,:] * t5
 
 
-  t6 = dh6_4_l6_in[:,4*h:5*h]*t1[:,None]
+  t6 = dh6_4_l6_in[:,4*h:5*h]*t1
   t6 = np.sum(t6, axis=0) /BATCH_SIZE
 
-  t7 = dh5_3_l5_in[:,h:2*h]*t6[:,None]
+  t7 = dh5_3_l5_in[:,h:2*h]*t6
   t7 = np.sum(t7, axis=0) / BATCH_SIZE
 
   dL_h6_4_w2_3 = np.zeros(dh2_2_w2.shape)
-  dL_h6_4_w2_3[:,:] = dh2_2_w2[:,:] * t7[:,None]
+  dL_h6_4_w2_3[:,:] = dh2_2_w2[:,:] * t7
 
   dL_h6_4_w2 = dL_h6_4_w2_1 + dL_h6_4_w2_2 + dL_h6_4_w2_3
 
   #dh65_dw2
   t1 = dL_v_in[3*h:4*h]
-  t2 = dh6_5_l6_in[:,3*h:4*h]*t1[:,None]
+  t2 = dh6_5_l6_in[:,3*h:4*h]*t1
   t2 = np.sum(t2, axis=0) /BATCH_SIZE
 
-  t3 = dh4_4_l4_in[:,h:2*h]*t2[:,None]
+  t3 = dh4_4_l4_in[:,h:2*h]*t2
   t3 = np.sum(t3, axis=0) / BATCH_SIZE
 
-  t4 = dh3_3_l3_in[:,h:2*h]*t3[:,None]
+  t4 = dh3_3_l3_in[:,h:2*h]*t3
   t4 = np.sum(t4, axis=0) / BATCH_SIZE
 
   dL_h6_5_w2_1 = np.zeros(dh2_2_w2.shape)
-  dL_h6_5_w2_1[:,:] = dh2_2_w2[:,:] * t4[:,None]
+  dL_h6_5_w2_1[:,:] = dh2_2_w2[:,:] * t4
 
-  t5 = dh6_5_l6_in[:,4*h:5*h]*t1[:,None]
+  t5 = dh6_5_l6_in[:,4*h:5*h]*t1
   t5 = np.sum(t5, axis=0) / BATCH_SIZE
 
-  t6 = dh5_4_l5_in[:,2*h:3*h]*t5[:,None]
+  t6 = dh5_4_l5_in[:,2*h:3*h]*t5
   t6 = np.sum(t6, axis=0) / BATCH_SIZE
 
-  t7 = dh3_3_l3_in[:,h:2*h]*t6[:,None]
+  t7 = dh3_3_l3_in[:,h:2*h]*t6
   t7 = np.sum(t7, axis=0) / BATCH_SIZE
 
   dL_h6_5_w2_2_1 = np.zeros(dh2_2_w2.shape)
-  dL_h6_5_w2_2_1 = dh2_2_w2[:, :]*t7[:,None]
+  dL_h6_5_w2_2_1 = dh2_2_w2[:, :]*t7
 
-  t8 = dh5_4_l5_in[:,3*h:4*h]*t5[:,None]
+  t8 = dh5_4_l5_in[:,3*h:4*h]*t5
   t8 = np.sum(t8, axis=0) / BATCH_SIZE
 
-  t9 = dh4_3_l4_in[:,h:2*h]*t8[:,None]
+  t9 = dh4_3_l4_in[:,h:2*h]*t8
   t9 = np.sum(t9, axis=0) / BATCH_SIZE
 
   dL_h6_5_w2_2_2 = np.zeros(dh2_2_w2.shape)
-  dL_h6_5_w2_2_2 = dh2_2_w2[:, :]*t9[:,None]
+  dL_h6_5_w2_2_2 = dh2_2_w2[:, :]*t9
 
   dL_h6_5_w2 = dL_h6_5_w2_1 + dL_h6_5_w2_2_1 + dL_h6_5_w2_2_2
 
 
   #dh66_dw2
   t1 = dL_v_in[4*h:5*h]
-  t2 = dh6_6_l6_in[:,4*h:5*h]*t1[:,None]
+  t2 = dh6_6_l6_in[:,4*h:5*h]*t1
   t2 = np.sum(t2, axis=0) /BATCH_SIZE
 
-  t3 = dh5_5_l5_in[:,3*h:4*h]*t2[:,None]
+  t3 = dh5_5_l5_in[:,3*h:4*h]*t2
   t3 = np.sum(t3, axis=0) / BATCH_SIZE
 
-  t4 = dh4_4_l4_in[:,2*h:3*h]*t3[:,None]
+  t4 = dh4_4_l4_in[:,2*h:3*h]*t3
   t4 = np.sum(t4, axis=0) / BATCH_SIZE
 
-  t5 = dh3_3_l3_in[:,h:2*h]*t4[:,None]
+  t5 = dh3_3_l3_in[:,h:2*h]*t4
   t5 = np.sum(t5, axis=0) / BATCH_SIZE
 
   dL_h6_6_w2 = np.zeros(dh2_2_w2.shape)
-  dL_h6_6_w2[:,:] = dh2_2_w2[:,:] * t5[:,None]
+  dL_h6_6_w2[:,:] = dh2_2_w2[:,:] * t5
 
   dL_w2 = dL_h6_3_w2 + dL_h6_4_w2 +\
           dL_h6_5_w2 + dL_h6_6_w2
@@ -825,7 +825,7 @@ def evaluate_gradients(params, params_back, df, hidden_size):
                              (np.sum(dh6_4_l6_in[:,3*h:4*h], axis=0)*\
                                np.sum(dh4_3_l4_in[:,h:2*h],axis=0)) +\
                              (np.sum(dh6_4_l6_in[:,4*h:5*h],axis=0)*\
-                               np.sum(dh5_3_l5_in[:,h*2*h],axis=0))) +\
+                               np.sum(dh5_3_l5_in[:,h:2*h],axis=0))) +\
           dL_v_in[3*h:4*h]* ( (np.sum(dh6_5_l6_in[:,3*h:4*h],axis=0)*\
                                 np.sum(dh4_4_l4_in[:,2*h:3*h],axis=0)*\
                                   np.sum(dh3_3_l3_in[:,h:2*h],axis=0)) +\
@@ -843,47 +843,47 @@ def evaluate_gradients(params, params_back, df, hidden_size):
   #W1
   #dh62_dw1
   t1 =dL_v_in[0:h]
-  t2 = dh6_2_l6_in[:,0:h]*t1[:,None]
+  t2 = dh6_2_l6_in[:,0:h]*t1
   t2 = np.sum(t2, axis=0) / BATCH_SIZE
 
   dL_h6_2_w1 = np.zeros(dh1_1_w1.shape)
-  dL_h6_2_w1[:,:] = dh1_1_w1[:,:]*t2[:,None]
+  dL_h6_2_w1[:,:] = dh1_1_w1[:,:]*t2
 
   #dh63_dw1
   t1 =dL_v_in[h:2*h]
-  t2 = dh6_3_l6_in[:,h:2*h]*t1[:,None]
+  t2 = dh6_3_l6_in[:,h:2*h]*t1
   t2 = np.sum(t2, axis=0) / BATCH_SIZE
 
-  t3 = dh2_2_l2_in[:,:]*t2[:,None]
+  t3 = dh2_2_l2_in[:,:]*t2
   t3 = np.sum(t3,axis=0) / BATCH_SIZE
 
   dL_h6_3_w1_1 = np.zeros(dh1_1_w1.shape)
-  dL_h6_3_w1_1[:,:] = dh1_1_w1[:,:] * t3[:,None]
+  dL_h6_3_w1_1[:,:] = dh1_1_w1[:,:] * t3
 
-  t4 = dh6_3_l6_in[:,2*h:3*h]*t1[:,None]
+  t4 = dh6_3_l6_in[:,2*h:3*h]*t1
   t4 = np.sum(t4, axis=0) / BATCH_SIZE
-  t5 = dh3_2_l3_in[:,0:h]*t4[:,None]
+  t5 = dh3_2_l3_in[:,0:h]*t4
   t5 = np.sum(t5,axis=0) / BATCH_SIZE
 
   dL_h6_3_w1_2 = np.zeros(dh1_1_w1.shape)
-  dL_h6_3_w1_2[:,:] = dh1_1_w1[:,:] * t5[:,None]
+  dL_h6_3_w1_2[:,:] = dh1_1_w1[:,:] * t5
 
-  t6 = dh6_3_l6_in[:,3*h:4*h]*t1[:,None]
+  t6 = dh6_3_l6_in[:,3*h:4*h]*t1
   t6 = np.sum(t6, axis=0) / BATCH_SIZE
-  t7 = dh4_2_l4_in[:,0:h]*t6[:,None]
+  t7 = dh4_2_l4_in[:,0:h]*t6
   t7 = np.sum(t6,axis=0) / BATCH_SIZE
 
   dL_h6_3_w1_3 = np.zeros(dh1_1_w1.shape)
-  dL_h6_3_w1_3[:,:] = dh1_1_w1[:,:] * t7[:,None]
+  dL_h6_3_w1_3[:,:] = dh1_1_w1[:,:] * t7
 
 
-  t8 = dh6_3_l6_in[:,4*h:5*h]*t1[:,None]
+  t8 = dh6_3_l6_in[:,4*h:5*h]*t1
   t8 = np.sum(t8, axis=0) / BATCH_SIZE
-  t9 = dh5_2_l5_in[:,0:h]*t8[:,None]
+  t9 = dh5_2_l5_in[:,0:h]*t8
   t9 = np.sum(t9,axis=0) / BATCH_SIZE
 
   dL_h6_3_w1_4 = np.zeros(dh1_1_w1.shape)
-  dL_h6_3_w1_4[:,:] = dh1_1_w1[:,:] * t9[:,None]
+  dL_h6_3_w1_4[:,:] = dh1_1_w1[:,:] * t9
 
 
   dL_h6_3_w1 = dL_h6_3_w1_1 + dL_h6_3_w1_2 +\
@@ -891,71 +891,71 @@ def evaluate_gradients(params, params_back, df, hidden_size):
 
   #dh64_dw1
   t1 =dL_v_in[2*h:3*h]
-  t2 = dh6_4_l6_in[:,2*h:3*h]*t1[:,None]
+  t2 = dh6_4_l6_in[:,2*h:3*h]*t1
   t2 = np.sum(t2, axis=0) /BATCH_SIZE
 
-  t3 = dh3_3_l3_in[:,h:2*h]*t2[:,None]
+  t3 = dh3_3_l3_in[:,h:2*h]*t2
   t3 = np.sum(t3, axis=0) / BATCH_SIZE
 
-  t4 = dh2_2_l2_in[:,:]*t3[:,None]
+  t4 = dh2_2_l2_in[:,:]*t3
   t4 = np.sum(t4, axis=0) /BATCH_SIZE
 
   dL_h6_4_w1_1 = np.zeros(dh1_1_w1.shape)
-  dL_h6_4_w1_1[:,:] = dh1_1_w1[:,:] * t4[:,None]
+  dL_h6_4_w1_1[:,:] = dh1_1_w1[:,:] * t4
 
-  t5 = dh6_4_l6_in[:,3*h:4*h]*t1[:,None]
+  t5 = dh6_4_l6_in[:,3*h:4*h]*t1
   t5 = np.sum(t5, axis=0) /BATCH_SIZE
 
-  t6 = dh4_3_l4_in[:,h:2*h]*t5[:,None]
+  t6 = dh4_3_l4_in[:,h:2*h]*t5
   t6 = np.sum(t6, axis=0) / BATCH_SIZE
 
-  t7 = dh2_2_l2_in[:,:]*t6[:,None]
+  t7 = dh2_2_l2_in[:,:]*t6
   t7 = np.sum(t7, axis=0) /BATCH_SIZE
 
   dL_h6_4_w1_2 = np.zeros(dh1_1_w1.shape)
-  dL_h6_4_w1_2[:,:] = dh1_1_w1[:,:] * t7[:,None]
+  dL_h6_4_w1_2[:,:] = dh1_1_w1[:,:] * t7
 
 
-  t8 = dh4_3_l4_in[:,2*h:3*h]*t5[:,None]
+  t8 = dh4_3_l4_in[:,2*h:3*h]*t5
   t8 = np.sum(t8, axis=0) / BATCH_SIZE
 
-  t9 = dh3_2_l3_in[:,0:h]*t8[:,None]
+  t9 = dh3_2_l3_in[:,0:h]*t8
   t9 = np.sum(t9, axis=0) /BATCH_SIZE
 
   dL_h6_4_w1_3 = np.zeros(dh1_1_w1.shape)
-  dL_h6_4_w1_3[:,:] = dh1_1_w1[:,:] * t9[:,None]
+  dL_h6_4_w1_3[:,:] = dh1_1_w1[:,:] * t9
 
 
-  t10 = dh6_4_l6_in[:,4*h:5*h]*t1[:,None]
+  t10 = dh6_4_l6_in[:,4*h:5*h]*t1
   t10 = np.sum(t10, axis=0) /BATCH_SIZE
 
-  t11 = dh5_3_l5_in[:,h:2*h]*t10[:,None]
+  t11 = dh5_3_l5_in[:,h:2*h]*t10
   t11 = np.sum(t11, axis=0) / BATCH_SIZE
 
-  t12 = dh2_2_l2_in[:,:]*t11[:,None]
+  t12 = dh2_2_l2_in[:,:]*t11
   t12 = np.sum(t12, axis=0) /BATCH_SIZE
 
   dL_h6_4_w1_4 = np.zeros(dh1_1_w1.shape)
-  dL_h6_4_w1_4[:,:] = dh1_1_w1[:,:] * t12[:,None]
+  dL_h6_4_w1_4[:,:] = dh1_1_w1[:,:] * t12
 
-  t13 = dh5_3_l5_in[:,2*h:3*h]*t10[:,None]
+  t13 = dh5_3_l5_in[:,2*h:3*h]*t10
   t13 = np.sum(t13, axis=0) / BATCH_SIZE
 
-  t14 = dh3_2_l3_in[:,0:h]*t13[:,None]
+  t14 = dh3_2_l3_in[:,0:h]*t13
   t14 = np.sum(t14, axis=0) /BATCH_SIZE
 
   dL_h6_4_w1_5 = np.zeros(dh1_1_w1.shape)
-  dL_h6_4_w1_5[:,:] = dh1_1_w1[:,:] * t14[:,None]
+  dL_h6_4_w1_5[:,:] = dh1_1_w1[:,:] * t14
 
 
-  t15 = dh5_3_l5_in[:,3*h:4*h]*t10[:,None]
+  t15 = dh5_3_l5_in[:,3*h:4*h]*t10
   t15 = np.sum(t15, axis=0) / BATCH_SIZE
 
-  t16 = dh4_2_l4_in[:,0:h]*t15[:,None]
+  t16 = dh4_2_l4_in[:,0:h]*t15
   t16 = np.sum(t16, axis=0) /BATCH_SIZE
 
   dL_h6_4_w1_6 = np.zeros(dh1_1_w1.shape)
-  dL_h6_4_w1_6[:,:] = dh1_1_w1[:,:] * t16[:,None]
+  dL_h6_4_w1_6[:,:] = dh1_1_w1[:,:] * t16
 
   dL_h6_4_w1 = dL_h6_4_w1_1 + dL_h6_4_w1_2 +\
                dL_h6_4_w1_3 + dL_h6_4_w1_4 +\
@@ -963,79 +963,79 @@ def evaluate_gradients(params, params_back, df, hidden_size):
 
   #dh65_dw1
   t1 = dL_v_in[3*h:4*h]
-  t2 = dh6_5_l6_in[:,3*h:4*h]*t1[:,None]
+  t2 = dh6_5_l6_in[:,3*h:4*h]*t1
   t2 = np.sum(t2, axis=0) /BATCH_SIZE
 
-  t3 = dh4_4_l4_in[:,2*h:3*h]*t2[:,None]
+  t3 = dh4_4_l4_in[:,2*h:3*h]*t2
   t3 = np.sum(t3, axis=0) / BATCH_SIZE
 
-  t4 = dh3_3_l3_in[:,h:2*h]*t3[:,None]
+  t4 = dh3_3_l3_in[:,h:2*h]*t3
   t4 = np.sum(t4, axis=0) / BATCH_SIZE
 
-  t5 = dh2_2_l2_in[:,:]*t4[:,None]
+  t5 = dh2_2_l2_in[:,:]*t4
   t5 = np.sum(t5, axis=0) / BATCH_SIZE
 
   dL_h6_5_w1_1 = np.zeros(dh1_1_w1.shape)
-  dL_h6_5_w1_1[:,:] = dh1_1_w1[:,:] * t5[:,None]
+  dL_h6_5_w1_1[:,:] = dh1_1_w1[:,:] * t5
 
-  t6 = dh6_5_l6_in[:,4*h:5*h]*t1[:,None]
+  t6 = dh6_5_l6_in[:,4*h:5*h]*t1
   t6 = np.sum(t6, axis=0) / BATCH_SIZE
 
-  t7 = dh5_4_l5_in[:,2*h:3*h]*t6[:,None]
+  t7 = dh5_4_l5_in[:,2*h:3*h]*t6
   t7 = np.sum(t7, axis=0) / BATCH_SIZE
 
-  t8 = dh3_3_l3_in[:,h:2*h]*t7[:,None]
+  t8 = dh3_3_l3_in[:,h:2*h]*t7
   t8 = np.sum(t8, axis=0) / BATCH_SIZE
 
-  t9 = dh2_2_l2_in[:,:]*t8[:,None]
+  t9 = dh2_2_l2_in[:,:]*t8
   t9 = np.sum(t9, axis=0) / BATCH_SIZE
 
   dL_h6_5_w1_2 = np.zeros(dh1_1_w1.shape)
-  dL_h6_5_w1_2 = dh1_1_w1[:, :]*t9[:,None]
+  dL_h6_5_w1_2 = dh1_1_w1[:, :]*t9
 
-  t10 = dh5_4_l5_in[:,3*h:4*h]*t6[:,None]
+  t10 = dh5_4_l5_in[:,3*h:4*h]*t6
   t10 = np.sum(t10, axis=0) / BATCH_SIZE
 
-  t11 = dh4_3_l4_in[:,h:2*h]*t10[:,None]
+  t11 = dh4_3_l4_in[:,h:2*h]*t10
   t11 = np.sum(t11, axis=0) / BATCH_SIZE
 
-  t12 = dh2_2_l2_in[:,:]*t11[:,None]
+  t12 = dh2_2_l2_in[:,:]*t11
   t12 = np.sum(t12, axis=0) / BATCH_SIZE
 
   dL_h6_5_w1_3 = np.zeros(dh1_1_w1.shape)
-  dL_h6_5_w1_3 = dh1_1_w1[:, :]*t12[:,None]
+  dL_h6_5_w1_3 = dh1_1_w1[:, :]*t12
 
-  t13 = dh4_3_l4_in[:,2*h:3*h]*t10[:,None]
+  t13 = dh4_3_l4_in[:,2*h:3*h]*t10
   t13 = np.sum(t13, axis=0) / BATCH_SIZE
 
-  t14 = dh3_2_l3_in[:,0:h]*t13[:,None]
+  t14 = dh3_2_l3_in[:,0:h]*t13
   t14 = np.sum(t14, axis=0) / BATCH_SIZE
 
   dL_h6_5_w1_4 = np.zeros(dh1_1_w1.shape)
-  dL_h6_5_w1_4 = dh1_1_w1[:, :]*t14[:,None]
+  dL_h6_5_w1_4 = dh1_1_w1[:, :]*t14
 
   dL_h6_5_w1 = dL_h6_5_w1_1 + dL_h6_5_w1_2 +\
                dL_h6_5_w1_3 + dL_h6_5_w1_4
 
   #dh66_dw1
   t1 = dL_v_in[4*h:5*h]
-  t2 = dh6_6_l6_in[:,4*h:5*h]*t1[:,None]
+  t2 = dh6_6_l6_in[:,4*h:5*h]*t1
   t2 = np.sum(t2, axis=0) /BATCH_SIZE
 
-  t3 = dh5_5_l5_in[:,3*h:4*h]*t2[:,None]
+  t3 = dh5_5_l5_in[:,3*h:4*h]*t2
   t3 = np.sum(t3, axis=0) / BATCH_SIZE
 
-  t4 = dh4_4_l4_in[:,2*h:3*h]*t3[:,None]
+  t4 = dh4_4_l4_in[:,2*h:3*h]*t3
   t4 = np.sum(t4, axis=0) / BATCH_SIZE
 
-  t5 = dh3_3_l3_in[:,h:2*h]*t4[:,None]
+  t5 = dh3_3_l3_in[:,h:2*h]*t4
   t5 = np.sum(t5, axis=0) / BATCH_SIZE
 
-  t6 = dh2_2_l2_in[:,:]*t5[:,None]
+  t6 = dh2_2_l2_in[:,:]*t5
   t6 = np.sum(t6, axis=0) / BATCH_SIZE
 
   dL_h6_6_w1 = np.zeros(dh1_1_w1.shape)
-  dL_h6_6_w1[:,:] = dh1_1_w1[:,:] * t6[:,None]
+  dL_h6_6_w1[:,:] = dh1_1_w1[:,:] * t6
 
   dL_w1 = dL_h6_2_w1 + dL_h6_3_w2 + dL_h6_4_w2 +\
           dL_h6_5_w2 + dL_h6_6_w2
@@ -1121,15 +1121,11 @@ def update_params(params, gradients, lr):
     params_updated(tuple): tuple of updated params
   """
 
-  dL_w1, dL_b1, dL_w2, dL_b2, dL_w3, dL_b3, dL_w4, dL_b4,\
-  dL_w5, dL_b5, dL_w6, dL_b6, dL_v_board, dL_v_in = gradients
+  updated_params = list()  
+  for idx, param in enumerate(params):
+    updated_params.append(param - (lr * gradients[idx]))
 
-
-  w1, b1, w2, b2, w3, b3, w4, b4, w5, b5, w6, b6, v_board, v_in = params
-  for idx, param in params:
-    params[idx] = param - (lr * gradient[idx])
-
-  return params
+  return tuple(updated_params)
 
 
 #Tester code
@@ -1146,4 +1142,4 @@ print loss
 df = softmax_cross_entropy_loss_derivative(probs, label)
 gradients, params = evaluate_gradients(p, params_back, df, hidden_size)
 params = update_params(params, gradients, learning_rate)
-
+print params
