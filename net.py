@@ -6,7 +6,7 @@ import numpy as np
 from softmax import *
 from tensorflow.examples.tutorials.mnist import input_data
 
-BATCH_SIZE = 100
+BATCH_SIZE = 10
 NUM_CLASSES = 10
 
 
@@ -1039,8 +1039,8 @@ def evaluate_gradients(params, params_back, df, hidden_size):
   dL_h6_6_w1 = np.zeros(dh1_1_w1.shape)
   dL_h6_6_w1[:,:] = dh1_1_w1[:,:] * t6
 
-  dL_w1 = dL_h6_2_w1 + dL_h6_3_w2 + dL_h6_4_w2 +\
-          dL_h6_5_w2 + dL_h6_6_w2
+  dL_w1 = dL_h6_2_w1 + dL_h6_3_w1 + dL_h6_4_w1 +\
+          dL_h6_5_w1 + dL_h6_6_w1
 
 
   #dL_b1
@@ -1137,8 +1137,8 @@ def main():
   train_images = train.images
   train_labels = train.labels
   input_size = len(train_images[0])
-  hidden_size = 10000
-  learning_rate = 0.4
+  hidden_size = 1000
+  learning_rate = 0.004
 
   params = get_params(input_size,NUM_CLASSES,hidden_size)
   #train on mini-batches
