@@ -89,10 +89,8 @@ def forward(params, inputs, hidden_size):
   #Calculate activations
   h1_1 = np.maximum(np.dot(l1_in, w1) + b1, 0) 
   dh1_1_w1 = np.zeros(w1.shape)
-  for i in range(hidden_size):
-    tmp = h1_1[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh1_1_w1[:,i] = np.sum(l1_in[idx],axis=0)
+  dh = np.int16(h1_1 > 0)
+  dh1_1_w1 = np.dot(l1_in.T, dh)
   dh1_1_w1 /= BATCH_SIZE
   dh1_1_b1 = np.sum( np.int16(h1_1>0) ,axis=0)
 
@@ -107,80 +105,54 @@ def forward(params, inputs, hidden_size):
   #Calculate activations and backward pass derivatives 
   h2_2 = np.maximum(np.dot(l2_in, w2)+b2, 0)
   dh2_2_w2 = np.zeros(w2.shape)
-  for i in range(hidden_size):
-    tmp = h2_2[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh2_2_w2[:,i] = np.sum(l2_in[idx],axis=0)
+  dh = np.int16(h2_2 > 0)
+  dh2_2_w2 = np.dot(l2_in.T, dh)
   dh2_2_w2 /= BATCH_SIZE
   dh2_2_b2 = np.sum( np.int16(h2_2>0) ,axis=0)
 
   dh2_2_l2_in = np.zeros(l2_in.shape)
-  for i in range(BATCH_SIZE):
-    tmp = h2_2[i,:]
-    idx = np.nonzero(tmp)[0]
-    dh2_2_l2_in[i,:] = np.sum(w2[:,idx],axis=1)
-
+  dh2_2_l2_in = np.dot(dh, w2.T)
 
   h3_2 = np.maximum(np.dot(l3_in, w3)+b3, 0)
   dh3_2_w3 = np.zeros(w3.shape)
-  for i in range(hidden_size):
-    tmp = h3_2[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh3_2_w3[:,i] = np.sum(l3_in[idx],axis=0)
+  dh = np.int16(h3_2 > 0)
+  dh3_2_w3 = np.dot(l3_in.T, dh)
   dh3_2_w3 /= BATCH_SIZE
   dh3_2_b3 = np.sum( np.int16(h3_2>0) ,axis=0)
 
   dh3_2_l3_in = np.zeros(l3_in.shape)
-  for i in range(BATCH_SIZE):
-    tmp = h3_2[i,:]
-    idx = np.nonzero(tmp)[0]
-    dh3_2_l3_in[i,:] = np.sum(w3[:,idx],axis=1)
+  dh3_2_l3_in = np.dot(dh, w3.T)
 
   h4_2 = np.maximum(np.dot(l4_in, w4)+b4, 0)
   dh4_2_w4 = np.zeros(w4.shape)
-  for i in range(hidden_size):
-    tmp = h4_2[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh4_2_w4[:,i] = np.sum(l4_in[idx],axis=0)
+  dh = np.int16(h4_2 > 0)
+  dh4_2_w4 = np.dot(l4_in.T, dh)
   dh4_2_w4 /= BATCH_SIZE
   dh4_2_b4 = np.sum( np.int16(h4_2>0) ,axis=0)
 
   dh4_2_l4_in = np.zeros(l4_in.shape)
-  for i in range(BATCH_SIZE):
-    tmp = h4_2[i,:]
-    idx = np.nonzero(tmp)[0]
-    dh4_2_l4_in[i,:] = np.sum(w4[:,idx],axis=1)
+  dh4_2_l4_in = np.dot(dh, w4.T)
 
   h5_2 = np.maximum(np.dot(l5_in, w5)+b5, 0)
   dh5_2_w5 = np.zeros(w5.shape)
-  for i in range(hidden_size):
-    tmp = h5_2[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh5_2_w5[:,i] = np.sum(l5_in[idx],axis=0)
+  dh = np.int16(h5_2 > 0)
+  dh5_2_w5 = np.dot(l5_in.T, dh)
   dh5_2_w5 /= BATCH_SIZE
   dh5_2_b5 = np.sum( np.int16(h5_2>0) ,axis=0)
 
   dh5_2_l5_in = np.zeros(l5_in.shape)
-  for i in range(BATCH_SIZE):
-    tmp = h5_2[i,:]
-    idx = np.nonzero(tmp)[0]
-    dh5_2_l5_in[i,:] = np.sum(w5[:,idx],axis=1)
+  dh5_2_l5_in = np.dot(dh, w5.T)
 
 
   h6_2 = np.maximum(np.dot(l6_in, w6)+b6, 0)
   dh6_2_w6 = np.zeros(w6.shape)
-  for i in range(hidden_size):
-    tmp = h6_2[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh6_2_w6[:,i] = np.sum(l6_in[idx],axis=0)
+  dh = np.int16(h6_2 > 0)
+  dh6_2_w6 = np.dot(l6_in.T, dh)
   dh6_2_w6 /= BATCH_SIZE
   dh6_2_b6 = np.sum( np.int16(h6_2>0) ,axis=0)
 
   dh6_2_l6_in = np.zeros(l6_in.shape)
-  for i in range(BATCH_SIZE):
-    tmp = h6_2[i,:]
-    idx = np.nonzero(tmp)[0]
-    dh6_2_l6_in[i,:] = np.sum(w6[:,idx],axis=1)
+  dh6_2_l6_in = np.dot(dh, w6.T)
 
 
   #Prepare inputs for the next time step
@@ -209,64 +181,44 @@ def forward(params, inputs, hidden_size):
   #Calculate activations 
   h3_3 = np.maximum(np.dot(l3_in, w3)+b3, 0)
   dh3_3_w3 = np.zeros(w3.shape)
-  for i in range(hidden_size):
-    tmp = h3_3[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh3_3_w3[:,i] = np.sum(l3_in[idx],axis=0)
+  dh = np.int16(h3_3 > 0)
+  dh3_3_w3 = np.dot(l3_in.T, dh)
   dh3_3_w3 /= BATCH_SIZE
   dh3_3_b3 = np.sum( np.int16(h3_3>0) ,axis=0)
 
   dh3_3_l3_in = np.zeros(l3_in.shape)
-  for i in range(BATCH_SIZE):
-    tmp = h3_3[i,:]
-    idx = np.nonzero(tmp)[0]
-    dh3_3_l3_in[i,:] = np.sum(w3[:,idx],axis=1)
+  dh3_3_l3_in = np.dot(dh, w3.T)
 
   h4_3 = np.maximum(np.dot(l4_in, w4)+b4, 0)
   dh4_3_w4 = np.zeros(w4.shape)
-  for i in range(hidden_size):
-    tmp = h4_3[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh4_3_w4[:,i] = np.sum(l4_in[idx],axis=0)
+  dh = np.int16(h4_3 > 0)
+  dh4_3_w4 = np.dot(l4_in.T, dh)
   dh4_3_w4 /= BATCH_SIZE
   dh4_3_b4 = np.sum( np.int16(h4_3>0) ,axis=0)
 
   dh4_3_l4_in = np.zeros(l4_in.shape)
-  for i in range(BATCH_SIZE):
-    tmp = h4_3[i,:]
-    idx = np.nonzero(tmp)[0]
-    dh4_3_l4_in[i,:] = np.sum(w4[:,idx],axis=1)
+  dh4_3_l4_in = np.dot(dh, w4.T)
 
   h5_3 = np.maximum(np.dot(l5_in, w5)+b5, 0)
   dh5_3_w5 = np.zeros(w5.shape)
-  for i in range(hidden_size):
-    tmp = h5_3[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh5_3_w5[:,i] = np.sum(l5_in[idx],axis=0)
+  dh = np.int16(h5_3 > 0)
+  dh5_3_w5 = np.dot(l5_in.T, dh)
   dh5_3_w5 /= BATCH_SIZE
   dh5_3_b5 = np.sum( np.int16(h5_3>0) ,axis=0)
 
   dh5_3_l5_in = np.zeros(l5_in.shape)
-  for i in range(BATCH_SIZE):
-    tmp = h5_3[i,:]
-    idx = np.nonzero(tmp)[0]
-    dh5_3_l5_in[i,:] = np.sum(w5[:,idx],axis=1)
+  dh5_3_l5_in = np.dot(dh, w5.T)
 
 
   h6_3 = np.maximum(np.dot(l6_in, w6)+b6, 0)
   dh6_3_w6 = np.zeros(w6.shape)
-  for i in range(hidden_size):
-    tmp = h6_3[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh6_3_w6[:,i] = np.sum(l6_in[idx],axis=0)
+  dh = np.int16(h6_3 > 0)
+  dh6_3_w6 = np.dot(l6_in.T, dh)
   dh6_3_w6 /= BATCH_SIZE
   dh6_3_b6 = np.sum( np.int16(h6_3>0) ,axis=0)
 
   dh6_3_l6_in = np.zeros(l6_in.shape)
-  for i in range(BATCH_SIZE):
-    tmp = h6_3[i,:]
-    idx = np.nonzero(tmp)[0]
-    dh6_3_l6_in[i,:] = np.sum(w6[:,idx],axis=1)
+  dh6_3_l6_in = np.dot(dh, w6.T)
 
 
   #Prepare inputs for the next time step
@@ -289,49 +241,34 @@ def forward(params, inputs, hidden_size):
   #Calculate activations 
   h4_4 = np.maximum(np.dot(l4_in, w4)+b4, 0)
   dh4_4_w4 = np.zeros(w4.shape)
-  for i in range(hidden_size):
-    tmp = h4_4[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh4_4_w4[:,i] = np.sum(l4_in[idx],axis=0)
+  dh = np.int16(h4_4 > 0)
+  dh4_4_w4 = np.dot(l4_in.T, dh)
   dh4_4_w4 /= BATCH_SIZE
   dh4_4_b4 = np.sum( np.int16(h4_4>0) ,axis=0)
 
   dh4_4_l4_in = np.zeros(l4_in.shape)
-  for i in range(BATCH_SIZE):
-    tmp = h4_4[i,:]
-    idx = np.nonzero(tmp)[0]
-    dh4_4_l4_in[i,:] = np.sum(w4[:,idx],axis=1)
+  dh4_4_l4_in = np.dot(dh, w4.T)
 
   h5_4 = np.maximum(np.dot(l5_in, w5)+b5, 0)
   dh5_4_w5 = np.zeros(w5.shape)
-  for i in range(hidden_size):
-    tmp = h5_4[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh5_4_w5[:,i] = np.sum(l5_in[idx],axis=0)
+  dh = np.int16(h5_4 > 0)
+  dh5_4_w5 = np.dot(l5_in.T, dh)
   dh5_4_w5 /= BATCH_SIZE
   dh5_4_b5 = np.sum( np.int16(h5_4>0) ,axis=0)
 
   dh5_4_l5_in = np.zeros(l5_in.shape)
-  for i in range(BATCH_SIZE):
-    tmp = h5_4[i,:]
-    idx = np.nonzero(tmp)[0]
-    dh5_4_l5_in[i,:] = np.sum(w5[:,idx],axis=1)
+  dh5_4_l5_in = np.dot(dh, w5.T)
 
 
   h6_4 = np.maximum(np.dot(l6_in, w6)+b6, 0)
   dh6_4_w6 = np.zeros(w6.shape)
-  for i in range(hidden_size):
-    tmp = h6_4[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh6_4_w6[:,i] = np.sum(l6_in[idx],axis=0)
+  dh = np.int16(h6_4 > 0)
+  dh6_4_w6 = np.dot(l6_in.T, dh)
   dh6_4_w6 /= BATCH_SIZE
   dh6_4_b6 = np.sum( np.int16(h6_4>0) ,axis=0)
 
   dh6_4_l6_in = np.zeros(l6_in.shape)
-  for i in range(BATCH_SIZE):
-    tmp = h6_4[i,:]
-    idx = np.nonzero(tmp)[0]
-    dh6_4_l6_in[i,:] = np.sum(w6[:,idx],axis=1)
+  dh6_4_l6_in = np.dot(dh, w6.T)
 
 
   #Prepare inputs for the next time step
@@ -350,34 +287,24 @@ def forward(params, inputs, hidden_size):
   #Calculate activations 
   h5_5 = np.maximum(np.dot(l5_in, w5)+b5, 0)
   dh5_5_w5 = np.zeros(w5.shape)
-  for i in range(hidden_size):
-    tmp = h5_5[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh5_5_w5[:,i] = np.sum(l5_in[idx],axis=0)
+  dh = np.int16(h5_5 > 0)
+  dh5_5_w5 = np.dot(l5_in.T, dh)
   dh5_5_w5 /= BATCH_SIZE
   dh5_5_b5 = np.sum( np.int16(h5_5>0) ,axis=0)
 
   dh5_5_l5_in = np.zeros(l5_in.shape)
-  for i in range(BATCH_SIZE):
-    tmp = h5_5[i,:]
-    idx = np.nonzero(tmp)[0]
-    dh5_5_l5_in[i,:] = np.sum(w5[:,idx],axis=1)
+  dh5_5_l5_in = np.dot(dh, w5.T)
 
 
   h6_5 = np.maximum(np.dot(l6_in, w6)+b6, 0)
   dh6_5_w6 = np.zeros(w6.shape)
-  for i in range(hidden_size):
-    tmp = h6_5[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh6_5_w6[:,i] = np.sum(l6_in[idx],axis=0)
+  dh = np.int16(h6_5 > 0)
+  dh6_5_w6 = np.dot(l6_in.T, dh)
   dh6_5_w6 /= BATCH_SIZE
   dh6_5_b6 = np.sum( np.int16(h6_5>0) ,axis=0)
 
   dh6_5_l6_in = np.zeros(l6_in.shape)
-  for i in range(BATCH_SIZE):
-    tmp = h6_5[i,:]
-    idx = np.nonzero(tmp)[0]
-    dh6_5_l6_in[i,:] = np.sum(w6[:,idx],axis=1)
+  dh6_5_l6_in = np.dot(dh, w6.T)
 
   #Prepare inputs for the next time step
   l6_in[:] = 0.
@@ -390,19 +317,14 @@ def forward(params, inputs, hidden_size):
   #Calculate activations 
   h6_6 = np.maximum(np.dot(l6_in, w6)+b6, 0)
   dh6_6_w6 = np.zeros(w6.shape)
-  for i in range(hidden_size):
-    tmp = h6_6[:,i]
-    idx = np.nonzero(tmp)[0]
-    dh6_6_w6[:,i] = np.sum(l6_in[idx],axis=0)
+  dh = np.int16(h6_6 > 0)
+  dh6_6_w6 = np.dot(l6_in.T, dh)
   dh6_6_w6 /= BATCH_SIZE
   dh6_6_b6 = np.sum( np.int16(h6_6>0) ,axis=0)
 
   dh6_6_l6_in = np.zeros(l6_in.shape)
-  for i in range(BATCH_SIZE):
-    tmp = h6_6[i,:]
-    idx = np.nonzero(tmp)[0]
-    dh6_6_l6_in[i,:] = np.sum(w6[:,idx],axis=1)
-  
+  dh6_6_l6_in = np.dot(dh, w6.T)
+
   v_in[:,4*hidden_size:5*hidden_size] = h6_6
 
   logit = np.dot(v_in, v_board)
@@ -1224,9 +1146,9 @@ def main():
         mini_batch = np.array(train_images[i*BATCH_SIZE:(i+1)*BATCH_SIZE])
         labels = np.array(train_labels[i*BATCH_SIZE:(i+1)*BATCH_SIZE])
         #print ('Prepared input data in {}'.format(time.time() - j))
-        #t = time.time()
+        t = time.time()
         logit, params_back = forward(params,mini_batch,hidden_size)
-        #print ('Completed forward in {}'.format(time.time() - t))
+        print ('Completed forward in {}'.format(time.time() - t))
         #t = time.time()
         loss, probs=  softmax_cross_entropy_loss(logit, labels, params, BATCH_SIZE)
         print ('Iter = {}; Epoch = {}; Loss = {}'.format(i, e, loss ))
