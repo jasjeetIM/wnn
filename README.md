@@ -1,10 +1,14 @@
 # wnn
-Wide Neural Network:
+Wide Neural Network(MNIST Digit Classification):
 
 This is a prototype implementation of a Wide Neural Network. Details on the architecture will be added soon. <br />
 The primary architectural difference is that connections from every lower layer go to every higher layer. <br />
 Further, the final prediction is made only after neurons in all layers have fired. This set up makes gradient calculations and <br />
-backpropagation more complex. <br />
+backpropagation more complex. <br /> <br />
+
+
+
+The network is trained on the MNIST digit classification task. <br />
 The modules are written in Python and only use Numpy. <br /> <br />
 
 Completed: <br />
