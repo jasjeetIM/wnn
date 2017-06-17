@@ -1,7 +1,7 @@
 #! /usr/bin/python
 # Author: Jasjeet Dhaliwal
 
-import time
+import os, time, pickle
 import numpy as np
 from softmax import *
 from gradient_checker import *
@@ -43,15 +43,23 @@ def get_params(inp_size, num_classes, hidden_size):
 
   v_board=np.random.normal(0,0.01, (5*hidden_size, num_classes)) 
   params = (w1, b1, w2, b2, w3, b3, w4, b4, w5, b5, w6, b6, v_board)
-  #params = {'w1': w1, 'b1': b1, 
-  #          'w2': w2, 'b2': b2, 
-  #          'w3': w3, 'b3': b3, 
-  #          'w4': w4, 'b4': b4, 
-  #          'w5': w5, 'b5': b5, 
-  #          'w6': w6, 'b6': b6, 
-  #          'v_board': v_board}
-  
-  return params
+
+  w1_v = np.zeros_like(w1)
+  b1_v = np.zeros_like(b1)
+  w2_v = np.zeros_like(w2)
+  b2_v = np.zeros_like(b2)
+  w3_v = np.zeros_like(w3)
+  b3_v = np.zeros_like(b3)
+  w4_v = np.zeros_like(w4)
+  b4_v = np.zeros_like(b4)
+  w5_v = np.zeros_like(w5)
+  b5_v = np.zeros_like(b5)
+  w6_v = np.zeros_like(w6)
+  b6_v = np.zeros_like(b6)
+  v_board_v = np.zeros_like(v_board)
+
+  velocity = [w1_v, b1_v, w2_v, b2_v, w3_v, b3_v, w4_v, b4_v, w5_v, b5_v, w6_v, b6_v, v_board_v]
+  return velocity, params
 
 def forward(params, inputs, hidden_size):
   """Performs forward pass on net with batch of inputs
@@ -1112,63 +1120,133 @@ def evaluate_gradients(params, params_back, df, hidden_size):
                dL_v_board)
   return gradients
 
-def update_params(params, gradients, lr):
+def update_params(params, gradients, v, lr, mu):
   """Update parameters with the provided gradients
 
   Args:
     params(tuple): tuple of params to be udpated
     gradients(tuple): tuple of gradients w.r.t loss
+    v(list): list of velocity matrices
     lr(float): learning rate
+    mu(float): momentum 
 
   Output:
+     v(list): tuple of updated velocities
     params_updated(tuple): tuple of updated params
   """
 
   updated_params = list()  
+  
   for idx, param in enumerate(params):
-    updated_params.append(param - (lr * gradients[idx]))
+    v_prev = v[idx]
+    v[idx] = mu*v[idx] - (lr * gradients[idx])
+    updated_params.append(param + (-mu*v_prev) + ((1+mu)*v[idx])  )
 
-  return tuple(updated_params)
+  return v, tuple(updated_params)
+
+def save_params(params,file_path):
+  """Save network parameters for future use
+  Args: 
+    params(tuple): tuple of network parameters to be saved
+    file_path(str): str path where to save the params
+
+  """
+  assert(os.path.dirname(file_path)), 'Invalid directory provided to save file'
+  assert(os.access(os.path.dirname(file_path), os.W_OK)), 'Need write permissions to parent dir'
+
+  with open(file_path, 'w') as f:
+       pickle.dump(params,f)
+
+
+
+def do_validation(params, hidden_size, mini_batch, labels):
+  """Do a validation check on the mini_batch
+  Args: 
+   params(tuple): tuple of params for the network
+   hidden_size(int): output dimension of each hidden layer
+   mini_batch(np array):validation images
+   lables(np array): corresponding validation labels
+
+  """
+  logit, pb = forward(params, mini_batch, hidden_size)
+  f, norm, probs = softmax(logit)
+  pred = np.argmax(probs, axis=0)
+  acc = np.sum(np.int16(pred == labels))/float(np.shape(pred)[0])
+  print ('Validation Accuracy = {}'.format(acc))
+
 
 def main():
   """train and eval the network"""
 
+  #Get input data
   mnist_data = input_data.read_data_sets('MNIST_data/', one_hot=False)
   train = mnist_data.train
+  val = mnist_data.validation
   train_images = train.images
   train_labels = train.labels
-  input_size = len(train_images[0])
-  hidden_size = 1000
-  learning_rate = 0.0001
+  val_images = val.images
+  val_labels = val.labels
 
-  params = get_params(input_size,NUM_CLASSES,hidden_size)
-  #train on mini-batches
-  for i in range(int(len(train_images)/BATCH_SIZE)):
-    print ('In training iteration {}'.format(i))
-    #j = time.time()
-    mini_batch = np.array(train_images[i*BATCH_SIZE:(i+1)*BATCH_SIZE])
-    labels = np.array(train_labels[i*BATCH_SIZE:(i+1)*BATCH_SIZE])
-    #print ('Prepared input data in {}'.format(time.time() - j))
-    #t = time.time()
-    logit, params_back = forward(params,mini_batch,hidden_size)
-    #print ('Completed forward in {}'.format(time.time() - t))
-    t = time.time()
-    loss, probs=  softmax_cross_entropy_loss(logit, labels, params, BATCH_SIZE)
-    print ('Evaluated loss = {} in {}'.format(loss, time.time() -t))
-    #t = time.time()
-    df = softmax_cross_entropy_loss_derivative(probs, labels)
-    #print ('Evaluated softmax derivative in {}'.format(time.time() -t))
-    #t = time.time()
-    gradients = evaluate_gradients(params, params_back, df, hidden_size)
-    #print ('Evaluated network gradients in {}'.format(time.time() -t))
-    # Check numerical gradient
-    # If uncommented, set BATCH_SIZE=2 and hidden_size = 5 (i.e. keep them small)
-    # And just run for one iteration
-    #check_gradients(gradients, params, mini_batch, labels, BATCH_SIZE, hidden_size, forward, softmax_cross_entropy_loss)
-    #t = time.time()
-    params = update_params(params, gradients, learning_rate)
-    #print ('Updated params in {}'.format(time.time() - t))
-    #print ('Total train time for mini-batch was {}'.format(time.time() - j))
+  #Set network size
+  input_size = len(train_images[0])
+  hidden_size = 10
+
+  #Training iterations and epochs
+  iterations = int(len(train_images)/BATCH_SIZE)
+  eval_iter = int(len(train_images)/len(val_images))
+  epochs = 4
+
+  #Nestrov momentum update
+  initial_lr= 0.0001
+  terminal_lr = 0.001
+  step_size = 0.0001
+  momentum = 0.9
+
+  #Path to save models
+  models_path = './models/params_'
+
+  #Get network params
+  velocity, params = get_params(input_size,NUM_CLASSES,hidden_size)
+  learning_rates = np.arange(initial_lr, terminal_lr, step_size)
+
+  for learning_rate in learning_rates:
+    for e in range(epochs):
+      val_idx = 0
+      #train on mini-batches
+      for i in range(iterations):
+        #Check if validation is required
+        if not (i %eval_iter):
+          v_batch = np.array(val_images[val_idx*BATCH_SIZE:(val_idx+1)*BATCH_SIZE])
+          v_labels = np.array(val_labels[val_idx*BATCH_SIZE:(val_idx+1)*BATCH_SIZE])
+          do_validation(params, hidden_size, v_batch, v_labels)
+          val_idx+=1
+        #j = time.time()
+        mini_batch = np.array(train_images[i*BATCH_SIZE:(i+1)*BATCH_SIZE])
+        labels = np.array(train_labels[i*BATCH_SIZE:(i+1)*BATCH_SIZE])
+        #print ('Prepared input data in {}'.format(time.time() - j))
+        #t = time.time()
+        logit, params_back = forward(params,mini_batch,hidden_size)
+        #print ('Completed forward in {}'.format(time.time() - t))
+        #t = time.time()
+        loss, probs=  softmax_cross_entropy_loss(logit, labels, params, BATCH_SIZE)
+        print ('Iter = {}; Epoch = {}; Loss = {}'.format(i, e, loss ))
+        #t = time.time()
+        df = softmax_cross_entropy_loss_derivative(probs, labels)
+        #print ('Evaluated softmax derivative in {}'.format(time.time() -t))
+        #t = time.time()
+        gradients = evaluate_gradients(params, params_back, df, hidden_size)
+        #print ('Evaluated network gradients in {}'.format(time.time() -t))
+        # Check numerical gradient
+        # If uncommented, set BATCH_SIZE=2 and hidden_size = 5 (i.e. keep them small)
+        # And just run for one iteration
+        #check_gradients(gradients, params, mini_batch, labels, BATCH_SIZE, hidden_size, forward, softmax_cross_entropy_loss)
+        #t = time.time()
+        velocity, params = update_params(params, gradients, velocity, learning_rate, momentum)
+        #print ('Updated params in {}'.format(time.time() - t))
+        #print ('Total train time for mini-batch was {}'.format(time.time() - j))
+
+    #save model parameters
+    save_params(params,models_path + str(learning_rate) + '_' + str(iterations) )
 
 if __name__ == '__main__':
   main()
