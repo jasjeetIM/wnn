@@ -1189,7 +1189,7 @@ def main():
 
   #Set network size
   input_size = len(train_images[0])
-  hidden_size = 10
+  hidden_size = 1000
 
   #Training iterations and epochs
   iterations = int(len(train_images)/BATCH_SIZE)
