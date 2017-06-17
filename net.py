@@ -1200,7 +1200,7 @@ def main():
   initial_lr= 0.0001
   terminal_lr = 0.001
   step_size = 0.0001
-  momentum = 0.9
+  momentum = 0.1
 
   #Path to save models
   models_path = './models/params_'
