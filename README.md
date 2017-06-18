@@ -25,4 +25,5 @@ Test network gradients <br />
 
 
 **To Do**: <br />
+Test network gradients <br />
 Train on mnist digit classification (in progress) <br />
