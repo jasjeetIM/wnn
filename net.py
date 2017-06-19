@@ -1157,7 +1157,7 @@ def main():
         # Check numerical gradient
         # If uncommented, set BATCH_SIZE=2 and hidden_size = 5 (i.e. keep them small)
         # And just run for one iteration
-        check_gradients(gradients, params, mini_batch, labels, BATCH_SIZE, hidden_size, forward, softmax_cross_entropy_loss)
+        #check_gradients(gradients, params, mini_batch, labels, BATCH_SIZE, hidden_size, forward, softmax_cross_entropy_loss)
         #t = time.time()
         velocity, params = update_params(params, gradients, velocity, learning_rate, momentum)
         #print ('Updated params in {}'.format(time.time() - t))
