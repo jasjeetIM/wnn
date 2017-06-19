@@ -7,7 +7,7 @@ from softmax import *
 from gradient_checker import *
 from tensorflow.examples.tutorials.mnist import input_data
 
-BATCH_SIZE = 10
+BATCH_SIZE = 100
 NUM_CLASSES = 10
 
 
@@ -340,12 +340,13 @@ def forward(params, inputs, hidden_size):
                  v_in, v_board)
   return logit, params_back
 
-def evaluate_gradients(params, params_back, df, hidden_size):
+def evaluate_gradients(params, params_back, df, hidden_size, reg):
   """Evaluates gradients through network
   Input: 
     params_back(tuple): Tuple of values required for backward pass
     df(vector): 1 x c vector of gradients with respect to the loss
     hidden_size(int): Number of hidden layers
+    reg(float): regularization strength
 
   Output: 
     gradiens(tuple): tuple of gradients of each param w.r.t loss
@@ -1020,19 +1021,19 @@ def evaluate_gradients(params, params_back, df, hidden_size):
 
 
   #Add regularization gradient as well
-  dL_w1+=w1
-  dL_b1+=b1
-  dL_w2+=w2
-  dL_b2+=b2
-  dL_w3+=w3
-  dL_b3+=b3
-  dL_w4+=w4
-  dL_b4+=b4
-  dL_w5+=w5
-  dL_b5+=b5
-  dL_w6+=w6
-  dL_b6+=b6
-  dL_v_board+=v_board 
+  dL_w1+= (reg*w1)
+  dL_b1+=  (reg*b1)
+  dL_w2+=  (reg*w2)
+  dL_b2+=  (reg*b2)
+  dL_w3+=  (reg*w3)
+  dL_b3+=  (reg*b3)
+  dL_w4+=  (reg*w4)
+  dL_b4+=  (reg*b4)
+  dL_w5+=  (reg*w5)
+  dL_b5+=  (reg*b5)
+  dL_w6+=  (reg*w6)
+  dL_b6+=  (reg*b6)
+  dL_v_board+=(reg*v_board) 
   gradients = ( dL_w1, dL_b1, dL_w2, dL_b2, dL_w3, dL_b3,\
                dL_w4, dL_b4, dL_w5, dL_b5, dL_w6, dL_b6,\
                dL_v_board)
@@ -1115,10 +1116,12 @@ def main():
   epochs = 4
 
   #Nestrov momentum update
-  initial_lr= 0.5
-  terminal_lr = 1.0
-  step_size = 0.1
+  initial_lr= 0.001
+  terminal_lr = 0.01
+  step_size = 0.001
   momentum = 0.9
+  #Regularization strength
+  reg = 0.0001
 
   #Path to save models
   models_path = './models/params_'
@@ -1146,13 +1149,13 @@ def main():
         logit, params_back = forward(params,mini_batch,hidden_size)
         #print ('Completed forward in {}'.format(time.time() - t))
         #t = time.time()
-        loss, probs=  softmax_cross_entropy_loss(logit, labels, params, BATCH_SIZE)
+        loss, probs=  softmax_cross_entropy_loss(logit, labels, params, BATCH_SIZE, reg)
         print ('Iter = {}; Epoch = {}; Loss = {}'.format(i, e, loss ))
         #t = time.time()
         df = softmax_cross_entropy_loss_derivative(probs, labels)
         #print ('Evaluated softmax derivative in {}'.format(time.time() -t))
         #t = time.time()
-        gradients = evaluate_gradients(params, params_back, df, hidden_size)
+        gradients = evaluate_gradients(params, params_back, df, hidden_size, reg)
         #print ('Evaluated network gradients in {}'.format(time.time() -t))
         # Check numerical gradient
         # If uncommented, set BATCH_SIZE=2 and hidden_size = 5 (i.e. keep them small)

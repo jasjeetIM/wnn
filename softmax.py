@@ -27,7 +27,7 @@ def softmax_cross_entropy_loss_derivative(probs, label):
   else:
     return df
 
-def softmax_cross_entropy_loss(logit, label, params, batch_size):
+def softmax_cross_entropy_loss(logit, label, params, batch_size, reg):
   """Calculates the softmax cross entropy loss 
   Input: 
     logit(numpy matrix): n x num_classes vector of scores
@@ -41,7 +41,7 @@ def softmax_cross_entropy_loss(logit, label, params, batch_size):
   data_loss = -f[np.arange(f.shape[0]), label] + np.log(norm)
   data_loss = data_loss.sum()
   data_loss /= batch_size
-  reg_loss = 0.5 *\
+  reg_loss = reg* 0.5 *\
              (np.square(w1).sum() + np.square(b1).sum() + \
              np.square(w2).sum() + np.square(b2).sum() + \
              np.square(w3).sum() + np.square(b3).sum() + \
