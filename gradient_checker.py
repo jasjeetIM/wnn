@@ -27,11 +27,9 @@ def eval_gradient(f, x, param_name):
     x[idx] = x_old - h
     fx_minus_h = f(x, param_name)
     x[idx] = x_old
-
-    dx[idx] = (fx_plus_h - fx_minus_h)/2*h
+    tmp = fx_plus_h - fx_minus_h
+    dx[idx] = (fx_plus_h - fx_minus_h)/(2*h)
     it.iternext()
-
-
   return dx
 
 
@@ -78,8 +76,7 @@ def check_gradients(gradients, params, inputs, labels, batch_size, hidden_size, 
   for idx, param in enumerate(params):
     print ('Checking gradient for {}'.format(param_names[idx]))
     dparam = eval_gradient(f, param, param_names[idx])
-    diff = np.absolute(dparam) - np.absolute(gradients[idx])
-    print diff.shape
+    diff = dparam - gradients[idx]
     print diff[diff > 0.01]
     
 

@@ -7,7 +7,7 @@ from softmax import *
 from gradient_checker import *
 from tensorflow.examples.tutorials.mnist import input_data
 
-BATCH_SIZE = 1
+BATCH_SIZE = 10
 NUM_CLASSES = 10
 
 
@@ -410,7 +410,7 @@ def evaluate_gradients(params, params_back, df, hidden_size):
   dL_b6 = dL_v_in[0:h] + dL_v_in[h:2*h] + dL_v_in[2*h:3*h]+\
           dL_v_in[3*h:4*h] + dL_v_in[4*h:5*h]
 
-
+  dL_b6 /= BATCH_SIZE
   #W5
   #dh62_dw5
   #dL_h6_2_w5 = np.zeros(dh5_2_w5.shape)
@@ -1107,7 +1107,7 @@ def main():
 
   #Set network size
   input_size = len(train_images[0])
-  hidden_size = 10
+  hidden_size = 100
 
   #Training iterations and epochs
   iterations = int(len(train_images)/BATCH_SIZE)
@@ -1158,7 +1158,6 @@ def main():
         # If uncommented, set BATCH_SIZE=2 and hidden_size = 5 (i.e. keep them small)
         # And just run for one iteration
         check_gradients(gradients, params, mini_batch, labels, BATCH_SIZE, hidden_size, forward, softmax_cross_entropy_loss)
-        return
         #t = time.time()
         velocity, params = update_params(params, gradients, velocity, learning_rate, momentum)
         #print ('Updated params in {}'.format(time.time() - t))

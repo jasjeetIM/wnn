@@ -21,8 +21,7 @@ Vectorization  <br />
 Complete gradient implementation for biases <br />
 Update parameters with gradient <br />
 Numerical gradient checker <br />
-
+Test network gradients <br />
 
 **To Do**: <br />
-Test network gradients <br />
 Train on mnist digit classification (in progress) <br />

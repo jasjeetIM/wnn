@@ -38,7 +38,6 @@ def softmax_cross_entropy_loss(logit, label, params, batch_size):
   """
   w1, b1, w2, b2, w3, b3, w4, b4, w5, b5, w6, b6, v_board = params
   f, norm, probs = softmax(logit)
-
   data_loss = -f[np.arange(f.shape[0]), label] + np.log(norm)
   data_loss = data_loss.sum()
   data_loss /= batch_size
