@@ -41,7 +41,7 @@ def get_params(inp_size, num_classes, hidden_size):
   w6=np.random.normal(0, 0.01, (5*hidden_size, hidden_size)) 
   b6=np.random.normal(0,0.01, hidden_size) 
 
-  v_board=np.random.normal(0,0.01, (5*hidden_size, num_classes)) 
+  v_board=np.random.normal(0,0.1, (5*hidden_size, num_classes)) 
   params = (w1, b1, w2, b2, w3, b3, w4, b4, w5, b5, w6, b6, v_board)
 
   w1_v = np.zeros_like(w1)
@@ -369,8 +369,8 @@ def evaluate_gradients(params, params_back, df, hidden_size, reg):
   dL_v_in = np.dot(t1,t2)
   dL_v_in = np.sum(dL_v_in.T, axis=0)/BATCH_SIZE
   
-  t1 = np.ones((BATCH_SIZE, NUM_CLASSES))
-  dL_v_board = np.dot(v_in.T, t1)
+  t1 = np.ones((BATCH_SIZE, NUM_CLASSES)) /BATCH_SIZE
+  dL_v_board = np.dot(v_in.T, t1) 
   dL_v_board = dL_v_board*df
 
   #W6
@@ -1033,7 +1033,7 @@ def evaluate_gradients(params, params_back, df, hidden_size, reg):
   dL_b5+=  (reg*b5)
   dL_w6+=  (reg*w6)
   dL_b6+=  (reg*b6)
-  dL_v_board+=(reg*v_board) 
+  dL_v_board+=(reg*v_board)
   gradients = ( dL_w1, dL_b1, dL_w2, dL_b2, dL_w3, dL_b3,\
                dL_w4, dL_b4, dL_w5, dL_b5, dL_w6, dL_b6,\
                dL_v_board)
@@ -1108,7 +1108,7 @@ def main():
 
   #Set network size
   input_size = len(train_images[0])
-  hidden_size = 100
+  hidden_size = 500
 
   #Training iterations and epochs
   iterations = int(len(train_images)/BATCH_SIZE)
@@ -1116,12 +1116,12 @@ def main():
   epochs = 4
 
   #Nestrov momentum update
-  initial_lr= 0.001
-  terminal_lr = 0.01
-  step_size = 0.001
+  initial_lr= 0.0001
+  terminal_lr = 0.001
+  step_size =0.0001
   momentum = 0.9
   #Regularization strength
-  reg = 0.0001
+  reg = 0.001
 
   #Path to save models
   models_path = './models/params_'
@@ -1138,11 +1138,13 @@ def main():
         #Check if validation is required
         if not (i %eval_iter):
           v_batch = np.array(val_images[val_idx*BATCH_SIZE:(val_idx+1)*BATCH_SIZE])
+          v_batch -= np.mean(v_batch, axis=0)
           v_labels = np.array(val_labels[val_idx*BATCH_SIZE:(val_idx+1)*BATCH_SIZE])
           do_validation(params, hidden_size, v_batch, v_labels)
           val_idx+=1
         #j = time.time()
         mini_batch = np.array(train_images[i*BATCH_SIZE:(i+1)*BATCH_SIZE])
+        mini_batch -= np.mean(mini_batch, axis=0)
         labels = np.array(train_labels[i*BATCH_SIZE:(i+1)*BATCH_SIZE])
         #print ('Prepared input data in {}'.format(time.time() - j))
         #t = time.time()
@@ -1160,7 +1162,8 @@ def main():
         # Check numerical gradient
         # If uncommented, set BATCH_SIZE=2 and hidden_size = 5 (i.e. keep them small)
         # And just run for one iteration
-        #check_gradients(gradients, params, mini_batch, labels, BATCH_SIZE, hidden_size, forward, softmax_cross_entropy_loss)
+        #check_gradients(gradients, params, mini_batch, labels, BATCH_SIZE, hidden_size, forward, softmax_cross_entropy_loss, reg)
+        #return
         #t = time.time()
         velocity, params = update_params(params, gradients, velocity, learning_rate, momentum)
         #print ('Updated params in {}'.format(time.time() - t))

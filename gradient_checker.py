@@ -33,7 +33,7 @@ def eval_gradient(f, x, param_name):
   return dx
 
 
-def check_gradients(gradients, params, inputs, labels, batch_size, hidden_size, forward_fn, loss_fn):
+def check_gradients(gradients, params, inputs, labels, batch_size, hidden_size, forward_fn, loss_fn, reg):
   """Checks whether analytical gradient is correct """
 
   params = list(params)
@@ -67,7 +67,7 @@ def check_gradients(gradients, params, inputs, labels, batch_size, hidden_size, 
       params[12] = param
      
     logit, params_back = forward_fn(tuple(params), inputs, hidden_size)
-    loss, probs = loss_fn(logit, labels, params, batch_size)
+    loss, probs = loss_fn(logit, labels, params, batch_size, reg)
     return loss
 
   param_names = ['w1', 'b1', 'w2', 'b2', 'w3', 'b3',\
