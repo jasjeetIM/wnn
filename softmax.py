@@ -11,10 +11,10 @@ def softmax(logit):
     probs(numpy matrix): matrix of size n x num_classes containing probs
   """
   #Shift scores for numerical stability
-  max_v = np.max(logit,1)
+  max_v = np.max(logit,axis=1)
   f = logit - max_v[:,None]
   z = np.exp(f)
-  norm = np.sum(z,1)
+  norm = np.sum(z,axis=1)
   probs = z / norm[:,None]
   
   return f, norm, probs
@@ -22,7 +22,10 @@ def softmax(logit):
 def softmax_cross_entropy_loss_derivative(probs, label):
   df = probs
   df[np.arange(probs.shape[0]), label] -= 1
-  return df.mean(0)
+  if df.shape[0] > 1:
+    return df.mean(axis=0)
+  else:
+    return df
 
 def softmax_cross_entropy_loss(logit, label, params, batch_size):
   """Calculates the softmax cross entropy loss 
@@ -33,7 +36,6 @@ def softmax_cross_entropy_loss(logit, label, params, batch_size):
   Output:
     loss(float): loss scalar
   """
-
   w1, b1, w2, b2, w3, b3, w4, b4, w5, b5, w6, b6, v_board = params
   f, norm, probs = softmax(logit)
 

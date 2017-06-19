@@ -7,7 +7,7 @@ from softmax import *
 from gradient_checker import *
 from tensorflow.examples.tutorials.mnist import input_data
 
-BATCH_SIZE = 10
+BATCH_SIZE = 1
 NUM_CLASSES = 10
 
 
@@ -74,6 +74,7 @@ def forward(params, inputs, hidden_size):
   """
 
   w1, b1, w2, b2, w3, b3, w4, b4, w5, b5, w6, b6, v_board = params
+
   l1_in = inputs
   l2_in = np.zeros((BATCH_SIZE, hidden_size))
   l3_in = np.zeros((BATCH_SIZE, 2*hidden_size))
@@ -329,7 +330,6 @@ def forward(params, inputs, hidden_size):
 
   logit = np.dot(v_in, v_board)
 
-
   params_back = (dh1_1_w1,\
                  dh2_2_l2_in, dh2_2_w2, dh3_2_l3_in, dh3_2_w3, dh4_2_l4_in,\
                  dh4_2_w4, dh5_2_l5_in, dh5_2_w5, dh6_2_l6_in, dh6_2_w6,\
@@ -363,17 +363,13 @@ def evaluate_gradients(params, params_back, df, hidden_size):
   v_in, v_board = params_back
 
   #dL/dv_in
-  tmp = v_board * df
-  tmp = np.sum(v_board, axis=1) 
-  dL_v_in = np.zeros(v_in.shape)
-  for i in range(BATCH_SIZE):
-    dL_v_in[i,:] = tmp
-  dL_v_in = np.sum(dL_v_in, axis=0) / BATCH_SIZE
-
-  tmp = np.sum(v_in, axis=0)
-  dL_v_board = np.zeros(v_board.shape)
-  for i in range(NUM_CLASSES):
-    dL_v_board[:,i] = tmp
+  t1 = v_board * df
+  t2 = np.ones((NUM_CLASSES, BATCH_SIZE))
+  dL_v_in = np.dot(t1,t2)
+  dL_v_in = np.sum(dL_v_in.T, axis=0)/BATCH_SIZE
+  
+  t1 = np.ones((BATCH_SIZE, NUM_CLASSES))
+  dL_v_board = np.dot(v_in.T, t1)
   dL_v_board = dL_v_board*df
 
   #W6
@@ -1111,7 +1107,7 @@ def main():
 
   #Set network size
   input_size = len(train_images[0])
-  hidden_size = 1000
+  hidden_size = 10
 
   #Training iterations and epochs
   iterations = int(len(train_images)/BATCH_SIZE)
@@ -1119,10 +1115,10 @@ def main():
   epochs = 4
 
   #Nestrov momentum update
-  initial_lr= 0.0001
-  terminal_lr = 0.001
-  step_size = 0.0001
-  momentum = 0.1
+  initial_lr= 0.5
+  terminal_lr = 1.0
+  step_size = 0.1
+  momentum = 0.9
 
   #Path to save models
   models_path = './models/params_'
@@ -1161,7 +1157,8 @@ def main():
         # Check numerical gradient
         # If uncommented, set BATCH_SIZE=2 and hidden_size = 5 (i.e. keep them small)
         # And just run for one iteration
-        #check_gradients(gradients, params, mini_batch, labels, BATCH_SIZE, hidden_size, forward, softmax_cross_entropy_loss)
+        check_gradients(gradients, params, mini_batch, labels, BATCH_SIZE, hidden_size, forward, softmax_cross_entropy_loss)
+        return
         #t = time.time()
         velocity, params = update_params(params, gradients, velocity, learning_rate, momentum)
         #print ('Updated params in {}'.format(time.time() - t))
